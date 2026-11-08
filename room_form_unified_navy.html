@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#153393"><title>お部屋探し希望条件フォーム｜試作版 v0.5・1ページ</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Yu Gothic",Meiryo,sans-serif;color:#203642;background:#fff}*{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:3px solid #153393}.wrap{max-width:690px;margin:auto;padding:18px 16px 52px}header .wrap{padding:18px 16px}.eyebrow{font-size:12px;color:#153393;font-weight:700}h1{font-size:23px;line-height:1.4;margin:5px 0 7px}h2{font-size:16px;margin:0 0 7px;color:#153393}p{line-height:1.7}.sub{font-size:13px;color:#657780}.alert{background:#fff3d9;border:1px solid #f2d99e;padding:14px;border-radius:12px;font-size:13px;line-height:1.7;margin-bottom:18px}.steps{display:flex;gap:7px;margin:18px 0}.steps span{flex:1;height:5px;background:#d7e2e4;border-radius:10px}.steps span.active{background:#153393}.card{background:transparent;border-radius:0;padding:0;margin:0;box-shadow:none}.page+.page{margin-top:34px;padding-top:28px;border-top:1px solid #e3e8f2}.field{margin-top:22px}.field:first-of-type{margin-top:16px}.field-title{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-weight:700;font-size:14px}.req{color:#c92845;font-size:12px}.optional{color:#647681;font-size:11px;background:#eef2f4;border-radius:5px;padding:3px 6px}.help{color:#667983;font-size:12px;margin:6px 0 9px}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.choices label{display:flex;gap:8px;align-items:center;border:1px solid #cfdbdf;padding:11px 9px;border-radius:10px;min-height:45px;cursor:pointer;font-size:14px}.choices label:has(input:checked){background:#edf1ff;border-color:#153393;color:#153393;font-weight:700}input[type=checkbox],input[type=radio]{accent-color:#153393;width:17px;height:17px;flex:none}input[type=text],input[type=tel],select,textarea{width:100%;border:1px solid #c9d5d9;border-radius:10px;padding:12px;font:inherit;background:#fff;color:#203642}textarea{min-height:100px;resize:vertical}input:focus,select:focus,textarea:focus{outline:2px solid #153393;outline-offset:1px}.actions{display:flex;gap:9px;margin-top:20px}.btn{flex:1;border:0;border-radius:11px;padding:15px 12px;background:#153393;color:#fff;font-weight:800;font-size:15px;cursor:pointer}.btn.secondary{background:#e7edef;color:#304752}.btn:disabled{opacity:.4;cursor:not-allowed}.hidden{display:none!important}.summary-row{border-bottom:1px solid #e8eff0;padding:12px 0}.summary-row strong{display:block;font-size:12px;color:#60747e;margin-bottom:5px}.summary-row div{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}.notice{font-size:12px;color:#5d6d76;line-height:1.7}footer{font-size:12px;color:#71818a;margin-top:20px}.error{color:#bc2642;font-size:12px;margin-top:7px}.counter{font-size:12px;color:#69808a;text-align:right;margin-top:5px}@media(max-width:390px){.choices{grid-template-columns:1fr 1fr}.card{padding:0}.choices label{font-size:13px}}
+</style></head><body>
+<header><div class="wrap"><div class="eyebrow">LINE お部屋探し｜フォーム試作版</div><h1>お部屋探しの希望条件を教えてください 🏠</h1><div class="sub">ご希望に合うお部屋をご案内するための入力フォームです。</div></div></header>
+<main class="wrap"><div class="alert"><strong>テスト版・まだ送信されません</strong><br>入力内容は確認画面に表示されるだけです。氏名・電話番号などには架空のテスト情報を入力してください。LINE認証、店舗への送信、回答保存は未実装です。</div>
+
+<form id="roomForm" novalidate>
+<section class="card page" data-page="0"><h2>お客様について</h2><div class="sub">まずは簡単な情報から。すべて任意です。</div>
+<div class="field"><label class="field-title" for="name">お名前 <span class="optional">任意</span></label><input id="name" name="name" type="text" maxlength="80" autocomplete="off" placeholder="例：山田 太郎（テスト名で入力）"></div>
+<div class="field"><label class="field-title" for="phone">携帯番号 <span class="optional">任意</span></label><input id="phone" name="phone" type="tel" inputmode="tel" maxlength="24" autocomplete="off" placeholder="テスト版のため実番号は入力しないでください"></div>
+<div class="field"><label class="field-title" for="school">通学先・勤務先 <span class="optional">任意</span></label><input id="school" name="school" type="text" maxlength="100" autocomplete="off" placeholder="例：岡山理科大学"></div>
+<div class="field"><div class="field-title">お引っ越しの理由 <span class="optional">任意</span></div><div class="choices" data-options="reasons"></div></div>
+</section>
+<section class="card page" data-page="1"><h2>希望する地域・予算</h2><div class="sub">希望条件が決まっていない場合は「相談したい」も選べます。</div>
+<div class="field"><div class="field-title">希望地域 <span class="req">＊必須</span></div><div class="choices" data-options="areas"></div><div class="error hidden" data-error="areas">希望地域を1つ以上選んでください。</div></div>
+<div class="field"><label class="field-title" for="district">希望学区 <span class="optional">任意</span></label><input id="district" name="district" type="text" maxlength="100" placeholder="例：〇〇小学校区"></div>
+<div class="field"><label class="field-title" for="rentMin">家賃の下限 <span class="optional">任意</span></label><select id="rentMin" name="rentMin"></select></div>
+<div class="field"><label class="field-title" for="rentMax">家賃の上限 <span class="req">＊必須</span></label><select id="rentMax" name="rentMax" required></select><div class="help">管理費・共益費込みの目安</div><div class="error hidden" data-error="rentMax">家賃上限を選んでください。</div></div>
+<div class="field"><div class="field-title">駐車場 <span class="req">＊必須</span></div><div class="choices" data-options="parking"></div><div class="error hidden" data-error="parking">駐車場の希望を選んでください。</div></div>
+</section>
+<section class="card page" data-page="2"><h2>お部屋の条件</h2><div class="sub">複数選べる項目は、気になるものをすべて選択できます。</div>
+<div class="field"><label class="field-title" for="move">入居希望時期 <span class="req">＊必須</span></label><select id="move" name="move" required></select><div class="error hidden" data-error="move">入居希望時期を選んでください。</div></div>
+<div class="field"><div class="field-title">建物の種別 <span class="optional">任意</span></div><div class="choices" data-options="building"></div></div>
+<div class="field"><div class="field-title">希望間取り <span class="req">＊必須</span></div><div class="choices" data-options="layouts"></div><div class="error hidden" data-error="layouts">希望間取りを1つ以上選んでください。</div></div>
+<div class="field"><label class="field-title" for="areaSize">希望面積 <span class="optional">任意</span></label><select id="areaSize" name="areaSize"></select></div>
+<div class="field"><div class="field-title">その他の条件 <span class="optional">任意</span></div><div class="choices" data-options="features"></div><label class="field-title" for="other" style="margin-top:14px">自由記入 <span class="optional">任意</span></label><textarea id="other" name="other" maxlength="500" placeholder="例：2階以上、日当たり重視、ネット無料など"></textarea><div class="counter">500文字まで</div></div>
+</section>
+<section class="card page" data-page="3"><h2>最後に</h2><div class="field"><div class="field-title">当店を知ったきっかけ <span class="optional">任意</span></div><div class="choices" data-options="sources"></div></div><p class="notice">「入力内容を確認する」を押すと、送信前の確認画面に進みます。この試作品では店舗へ送信されません。</p></section>
+<div class="actions"><button class="btn" type="button" id="next">入力内容を確認する →</button></div></form>
+<section id="confirm" class="card hidden" aria-live="polite"><h2>入力内容の確認</h2><p class="sub">内容を確認してください。これはテスト画面であり、店舗への送信は行われません。</p><div id="summary"></div><div class="actions"><button class="btn secondary" id="edit" type="button">修正する</button><button class="btn" id="finish" type="button">確認完了（デモ）</button></div></section>
+<section id="done" class="card hidden" aria-live="polite"><h2>✓ 確認できました</h2><p>お試し版の操作はここまでです。<strong>店舗への送信・保存は行っていません。</strong></p><button class="btn secondary" type="button" id="restart">もう一度確認する</button></section>
+<footer>お部屋探し希望条件フォーム v0.5 ｜ 静的HTMLデモ。LINE認証・送信・データベース保存は今後実装予定。</footer>
+</main>
+<script>
+'use strict';
+// 後から選択肢を変更するときは、下記の配列だけを編集してください。
+const OPTIONS={
+ reasons:['進学・入学','就職・転勤','住み替え','結婚・同居','その他'],
+ areas:['岡山大学周辺','岡山理科大学周辺','岡山駅周辺','岡山市北区','岡山市中区','岡山市南区','岡山市東区','その他・相談したい'],
+ parking:['必要（1台）','必要（2台以上）','不要','未定・相談したい'],
+ building:['マンション','アパート','一戸建て','こだわらない'],
+ layouts:['1R','1K','1DK','1LDK','2K・2DK','2LDK','3LDK以上','相談したい'],
+ features:['バス・トイレ別','独立洗面台','インターネット無料','オートロック','2階以上','室内洗濯機置場','ペット相談可','新築・築浅','家具家電付き','敷金・礼金を抑えたい'],
+ sources:['友人・知人・先輩の紹介','学校からの紹介','Google検索・Googleマップ','Instagram','SUUMO等の物件サイト','店舗の看板・通りがかり','その他']
+};
+const MULTI=new Set(['areas','layouts','features']);
+const TITLES={name:'お名前',phone:'携帯番号',school:'通学先・勤務先',reasons:'引っ越し理由',areas:'希望地域',district:'希望学区',rentMin:'家賃の下限',rentMax:'家賃の上限',parking:'駐車場',move:'入居希望時期',building:'建物の種別',layouts:'希望間取り',areaSize:'希望面積',features:'その他の条件（選択）',other:'その他の条件（自由記入）',sources:'当店を知ったきっかけ'};
+for(const [key,items] of Object.entries(OPTIONS)){
+ const target=document.querySelector(`[data-options="${key}"]`);
+ items.forEach((value,i)=>{const label=document.createElement('label');const input=document.createElement('input');input.type=MULTI.has(key)?'checkbox':'radio';input.name=key;input.value=value;label.append(input,document.createTextNode(value));target.append(label)});
+}
+function fillSelect(id,options,placeholder='選択してください'){const select=document.getElementById(id);select.add(new Option(placeholder,''));options.forEach(v=>select.add(new Option(v,v)))}
+const rents=Array.from({length:17},(_,i)=>`${(i+2)*0.5}万円`);
+fillSelect('rentMin',['下限なし',...rents],'指定なし');fillSelect('rentMax',[...rents,'10万円以上','相談したい']);
+fillSelect('move',['できるだけ早く','1か月以内','2か月以内','3か月以内','半年以内','時期は未定・相談したい']);
+fillSelect('areaSize',['20㎡未満','20〜25㎡','25〜30㎡','30〜40㎡','40〜50㎡','50㎡以上','こだわらない'],'指定なし');
+const form=document.getElementById('roomForm');
+function getValues(){const d={};for(const key of Object.keys(TITLES)){if(OPTIONS[key]){const chosen=[...form.querySelectorAll(`input[name="${key}"]:checked`)].map(e=>e.value);d[key]=MULTI.has(key)?chosen:chosen[0]||''}else d[key]=form.elements[key].value.trim()}return d}
+function validate(){const d=getValues();const required=['areas','rentMax','parking','move','layouts'];let ok=true;let first=null;for(const key of required){const invalid=Array.isArray(d[key])?!d[key].length:!d[key];const el=document.querySelector(`[data-error="${key}"]`);if(el){el.classList.toggle('hidden',!invalid);if(invalid&&!first)first=el.closest('.field')}if(invalid)ok=false}if(d.rentMin&&d.rentMax&&d.rentMin!=='下限なし'&&d.rentMax!=='相談したい'&&d.rentMax!=='10万円以上'){const num=x=>Number(x.replace('万円',''));if(num(d.rentMin)>num(d.rentMax)){alert('家賃の下限は上限以下にしてください。');ok=false;first=first||form.elements.rentMin}}if(first)first.scrollIntoView({behavior:'smooth',block:'center'});return ok}
+document.getElementById('next').onclick=()=>{if(!validate())return;const d=getValues();const target=document.getElementById('summary');target.replaceChildren();for(const [key,title] of Object.entries(TITLES)){const row=document.createElement('div');row.className='summary-row';const strong=document.createElement('strong');strong.textContent=title;const value=document.createElement('div');value.textContent=(Array.isArray(d[key])?d[key].join('、'):d[key])||'指定なし';row.append(strong,value);target.append(row)}form.classList.add('hidden');document.getElementById('confirm').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})};
+document.getElementById('edit').onclick=()=>{document.getElementById('confirm').classList.add('hidden');form.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})};
+document.getElementById('finish').onclick=()=>{document.getElementById('confirm').classList.add('hidden');document.getElementById('done').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})};
+document.getElementById('restart').onclick=()=>{document.getElementById('done').classList.add('hidden');form.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})};
+form.addEventListener('submit',e=>e.preventDefault());
+</script></body></html>
