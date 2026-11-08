@@ -1,10 +1,12 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#153393"><title>お部屋探し希望条件フォーム｜試作版 v0.5・1ページ</title>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#153393"><title>お部屋探し希望条件フォーム｜試作版 v0.6・LIFF認証テスト</title>
 <style>
 :root{font-family:system-ui,-apple-system,"Yu Gothic",Meiryo,sans-serif;color:#203642;background:#fff}*{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:3px solid #153393}.wrap{max-width:690px;margin:auto;padding:18px 16px 52px}header .wrap{padding:18px 16px}.eyebrow{font-size:12px;color:#153393;font-weight:700}h1{font-size:23px;line-height:1.4;margin:5px 0 7px}h2{font-size:16px;margin:0 0 7px;color:#153393}p{line-height:1.7}.sub{font-size:13px;color:#657780}.alert{background:#fff3d9;border:1px solid #f2d99e;padding:14px;border-radius:12px;font-size:13px;line-height:1.7;margin-bottom:18px}.steps{display:flex;gap:7px;margin:18px 0}.steps span{flex:1;height:5px;background:#d7e2e4;border-radius:10px}.steps span.active{background:#153393}.card{background:transparent;border-radius:0;padding:0;margin:0;box-shadow:none}.page+.page{margin-top:34px;padding-top:28px;border-top:1px solid #e3e8f2}.field{margin-top:22px}.field:first-of-type{margin-top:16px}.field-title{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-weight:700;font-size:14px}.req{color:#c92845;font-size:12px}.optional{color:#647681;font-size:11px;background:#eef2f4;border-radius:5px;padding:3px 6px}.help{color:#667983;font-size:12px;margin:6px 0 9px}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.choices label{display:flex;gap:8px;align-items:center;border:1px solid #cfdbdf;padding:11px 9px;border-radius:10px;min-height:45px;cursor:pointer;font-size:14px}.choices label:has(input:checked){background:#edf1ff;border-color:#153393;color:#153393;font-weight:700}input[type=checkbox],input[type=radio]{accent-color:#153393;width:17px;height:17px;flex:none}input[type=text],input[type=tel],select,textarea{width:100%;border:1px solid #c9d5d9;border-radius:10px;padding:12px;font:inherit;background:#fff;color:#203642}textarea{min-height:100px;resize:vertical}input:focus,select:focus,textarea:focus{outline:2px solid #153393;outline-offset:1px}.actions{display:flex;gap:9px;margin-top:20px}.btn{flex:1;border:0;border-radius:11px;padding:15px 12px;background:#153393;color:#fff;font-weight:800;font-size:15px;cursor:pointer}.btn.secondary{background:#e7edef;color:#304752}.btn:disabled{opacity:.4;cursor:not-allowed}.hidden{display:none!important}.summary-row{border-bottom:1px solid #e8eff0;padding:12px 0}.summary-row strong{display:block;font-size:12px;color:#60747e;margin-bottom:5px}.summary-row div{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}.notice{font-size:12px;color:#5d6d76;line-height:1.7}footer{font-size:12px;color:#71818a;margin-top:20px}.error{color:#bc2642;font-size:12px;margin-top:7px}.counter{font-size:12px;color:#69808a;text-align:right;margin-top:5px}@media(max-width:390px){.choices{grid-template-columns:1fr 1fr}.card{padding:0}.choices label{font-size:13px}}
-</style></head><body>
+
+.liff-status{font-size:13px;line-height:1.6;padding:11px 13px;background:#edf2ff;border-left:3px solid #153393;border-radius:7px;margin-bottom:15px;color:#153393}
+</style><script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script></head><body>
 <header><div class="wrap"><div class="eyebrow">LINE お部屋探し｜フォーム試作版</div><h1>お部屋探しの希望条件を教えてください 🏠</h1><div class="sub">ご希望に合うお部屋をご案内するための入力フォームです。</div></div></header>
-<main class="wrap"><div class="alert"><strong>テスト版・まだ送信されません</strong><br>入力内容は確認画面に表示されるだけです。氏名・電話番号などには架空のテスト情報を入力してください。LINE認証、店舗への送信、回答保存は未実装です。</div>
+<main class="wrap"><div id="liffStatus" class="liff-status" role="status" aria-live="polite">LINE認証を確認しています…</div><div class="alert"><strong>テスト版・まだ送信されません</strong><br>入力内容は確認画面に表示されるだけです。氏名・電話番号などには架空のテスト情報を入力してください。LINE認証、店舗への送信、回答保存は未実装です。</div>
 
 <form id="roomForm" novalidate>
 <section class="card page" data-page="0"><h2>お客様について</h2><div class="sub">まずは簡単な情報から。すべて任意です。</div>
@@ -35,6 +37,26 @@
 </main>
 <script>
 'use strict';
+// LINE認証の表示確認のみ。ユーザーID・トークンは画面表示、保存、送信しません。
+(async function checkLiff(){
+ const status=document.getElementById('liffStatus');
+ if(!window.liff){status.textContent='LINE認証機能を読み込めませんでした。通信環境を確認してください。';return;}
+ try {
+   await liff.init({liffId:'2012464413-YyKTO2Sk'});
+   if(!liff.isLoggedIn()){
+     status.textContent='LINE未ログインです。LINEアプリ内のLIFF URLから開いて確認してください。';
+     return;
+   }
+   try {
+     const profile=await liff.getProfile();
+     status.textContent='LINE認証OK：'+profile.displayName+' さん（テスト中・回答は送信されません）';
+   } catch(e) {
+     status.textContent='LINEログイン確認OK（プロフィールの取得はできませんでした）。';
+   }
+ }catch(e){
+   status.textContent='LINE認証の初期化に失敗しました：'+(e.code||'ERROR')+'。LIFF設定と起動URLを確認してください。';
+ }
+})();
 // 後から選択肢を変更するときは、下記の配列だけを編集してください。
 const OPTIONS={
  reasons:['進学・入学','就職・転勤','住み替え','結婚・同居','その他'],
