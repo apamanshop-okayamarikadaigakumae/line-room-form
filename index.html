@@ -1,9 +1,18 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#153393"><title>お部屋探し希望条件フォーム｜接続テスト v0.8</title>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#153393"><title>お部屋探し希望条件フォーム｜接続テスト v0.9</title>
 <style>
 :root{font-family:system-ui,-apple-system,"Yu Gothic",Meiryo,sans-serif;color:#203642;background:#fff}*{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:3px solid #153393}.wrap{max-width:690px;margin:auto;padding:18px 16px 52px}header .wrap{padding:18px 16px}.eyebrow{font-size:12px;color:#153393;font-weight:700}h1{font-size:23px;line-height:1.4;margin:5px 0 7px}h2{font-size:16px;margin:0 0 7px;color:#153393}p{line-height:1.7}.sub{font-size:13px;color:#657780}.alert{background:#fff3d9;border:1px solid #f2d99e;padding:14px;border-radius:12px;font-size:13px;line-height:1.7;margin-bottom:18px}.steps{display:flex;gap:7px;margin:18px 0}.steps span{flex:1;height:5px;background:#d7e2e4;border-radius:10px}.steps span.active{background:#153393}.card{background:transparent;border-radius:0;padding:0;margin:0;box-shadow:none}.page+.page{margin-top:34px;padding-top:28px;border-top:1px solid #e3e8f2}.field{margin-top:22px}.field:first-of-type{margin-top:16px}.field-title{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-weight:700;font-size:14px}.req{color:#c92845;font-size:12px}.optional{color:#647681;font-size:11px;background:#eef2f4;border-radius:5px;padding:3px 6px}.help{color:#667983;font-size:12px;margin:6px 0 9px}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.choices label{display:flex;gap:8px;align-items:center;border:1px solid #cfdbdf;padding:11px 9px;border-radius:10px;min-height:45px;cursor:pointer;font-size:14px}.choices label:has(input:checked){background:#edf1ff;border-color:#153393;color:#153393;font-weight:700}input[type=checkbox],input[type=radio]{accent-color:#153393;width:17px;height:17px;flex:none}input[type=text],input[type=tel],select,textarea{width:100%;border:1px solid #c9d5d9;border-radius:10px;padding:12px;font:inherit;background:#fff;color:#203642}textarea{min-height:100px;resize:vertical}input:focus,select:focus,textarea:focus{outline:2px solid #153393;outline-offset:1px}.actions{display:flex;gap:9px;margin-top:20px}.btn{flex:1;border:0;border-radius:11px;padding:15px 12px;background:#153393;color:#fff;font-weight:800;font-size:15px;cursor:pointer}.btn.secondary{background:#e7edef;color:#304752}.btn:disabled{opacity:.4;cursor:not-allowed}.hidden{display:none!important}.summary-row{border-bottom:1px solid #e8eff0;padding:12px 0}.summary-row strong{display:block;font-size:12px;color:#60747e;margin-bottom:5px}.summary-row div{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}.notice{font-size:12px;color:#5d6d76;line-height:1.7}footer{font-size:12px;color:#71818a;margin-top:20px}.error{color:#bc2642;font-size:12px;margin-top:7px}.counter{font-size:12px;color:#69808a;text-align:right;margin-top:5px}@media(max-width:390px){.choices{grid-template-columns:1fr 1fr}.card{padding:0}.choices label{font-size:13px}}
 
 .liff-status{font-size:13px;line-height:1.6;padding:11px 13px;background:#edf2ff;border-left:3px solid #153393;border-radius:7px;margin-bottom:15px;color:#153393}
+
+/* 送信中オーバーレイ */
+.sending-overlay{position:fixed;inset:0;z-index:1000;background:rgba(255,255,255,.94);display:flex;align-items:center;justify-content:center;padding:24px}
+.sending-panel{width:min(100%,360px);text-align:center;padding:30px 22px;border-radius:18px;border:1px solid #d9e1f2;box-shadow:0 12px 40px rgba(21,51,147,.12);background:#fff}
+.sending-spinner{width:52px;height:52px;border:5px solid #dfe6f7;border-top-color:#153393;border-radius:50%;margin:0 auto 18px;animation:room-spin .85s linear infinite}
+@keyframes room-spin{to{transform:rotate(360deg)}}
+.sending-title{font-size:18px;font-weight:800;color:#153393;margin-bottom:10px}
+.sending-desc{font-size:13px;color:#60747e;line-height:1.8}
+@media(prefers-reduced-motion:reduce){.sending-spinner{animation-duration:2s}}
 </style><script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script></head><body>
 <header><div class="wrap"><div class="eyebrow">LINE お部屋探し｜接続テスト版</div><h1>お部屋探しの希望条件を教えてください 🏠</h1><div class="sub">ご希望に合うお部屋をご案内するための入力フォームです。</div></div></header>
 <main class="wrap"><div id="liffStatus" class="liff-status" role="status" aria-live="polite">LINE認証を確認しています…</div><div class="alert"><strong>接続テスト中</strong><br>回答はGoogleスプレッドシートへ保存されます。テスト用の架空情報だけを入力してください。実際のお客様にはまだ公開しないでください。</div>
@@ -33,8 +42,11 @@
 <div class="actions"><button class="btn" type="button" id="next">入力内容を確認する →</button></div></form>
 <section id="confirm" class="card hidden" aria-live="polite"><h2>入力内容の確認</h2><p class="sub">内容を確認して送信してください。送信した回答はテスト用スプレッドシートに保存されます。</p><div id="summary"></div><div class="actions"><button class="btn secondary" id="edit" type="button">修正する</button><button class="btn" id="finish" type="button">テスト回答を送信</button></div></section>
 <section id="done" class="card hidden" aria-live="polite"><h2 id="doneTitle">送信結果</h2><p id="doneMessage"></p><button class="btn secondary" type="button" id="restart">入力画面へ戻る</button></section>
-<footer>お部屋探し希望条件フォーム v0.8 ｜ 接続テスト版（本番公開前）</footer>
+<footer>お部屋探し希望条件フォーム v0.9 ｜ 接続テスト版（本番公開前）</footer>
 </main>
+<div id="sendingOverlay" class="sending-overlay hidden" role="status" aria-live="polite" aria-label="回答を送信しています">
+  <div class="sending-panel"><div class="sending-spinner" aria-hidden="true"></div><div class="sending-title">回答を送信しています…</div><div class="sending-desc">送信結果を確認しています。<br>画面を閉じず、そのままお待ちください。<br>送信ボタンを繰り返し押す必要はありません。</div></div>
+</div>
 <script>
 'use strict';
 const GAS_URL='https://script.google.com/macros/s/AKfycby2sV0D_ysH5X23ISGlL6F2CSqltWziV2cvT1z3vqGIDCc2OnP2pw5UR6xqsuwzZ1RxaA/exec';
@@ -43,6 +55,8 @@ let pendingRequestId=null;
 let awaitingResult=false;
 let submitTimeout=null;
 let sendFrame=null;
+let submissionStarted=false;
+const sendingOverlay=document.getElementById('sendingOverlay');
 const sendButton=document.getElementById('finish');
 sendButton.disabled=true;
 (async function checkLiff(){
@@ -93,18 +107,19 @@ document.getElementById('edit').onclick=()=>{document.getElementById('confirm').
 function showResult(ok,message){
  document.getElementById('confirm').classList.add('hidden');
  document.getElementById('done').classList.remove('hidden');
- document.getElementById('doneTitle').textContent=ok?'送信受付の通知を受信しました':'送信結果を確認してください';
+ document.getElementById('doneTitle').textContent=ok?'送信が完了しました':'送信結果を確認してください';
  document.getElementById('doneMessage').textContent=message;
  window.scrollTo({top:0,behavior:'smooth'});
 }
 function clearSending(){
+ sendingOverlay.classList.add('hidden');
  awaitingResult=false;
  clearTimeout(submitTimeout);
  sendButton.disabled=!lineReady;
  sendButton.textContent='テスト回答を送信';
 }
 window.addEventListener('message',function(event){
- if(!/^https:\/\/(?:[a-z0-9-]+\.)?googleusercontent\.com$/.test(event.origin) && event.origin!=='https://script.google.com')return;
+ if(!/^https:\/\/(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(event.origin) && event.origin!=='https://script.google.com')return;
  const r=event.data;
  if(!awaitingResult || !r || r.kind!=='ROOM_FORM_RESULT' || r.requestId!==pendingRequestId)return;
  clearSending();
@@ -115,7 +130,7 @@ window.addEventListener('message',function(event){
  }
 });
 document.getElementById('finish').onclick=()=>{
- if(awaitingResult)return;
+ if(awaitingResult || submissionStarted)return;
  if(!lineReady || !window.liff || !liff.isInClient() || !liff.isLoggedIn()){
    alert('LINEアプリ内で認証してから送信してください。');return;
  }
@@ -141,8 +156,10 @@ document.getElementById('finish').onclick=()=>{
  }
  document.body.appendChild(postForm);
  awaitingResult=true;
+ submissionStarted=true;
+ sendingOverlay.classList.remove('hidden');
  sendButton.disabled=true;sendButton.textContent='送信中…';
- try{postForm.submit();}catch(e){clearSending();postForm.remove();alert('送信開始に失敗しました。');return;}
+ try{postForm.submit();}catch(e){submissionStarted=false;clearSending();postForm.remove();alert('送信開始に失敗しました。');return;}
  postForm.remove();
  submitTimeout=setTimeout(()=>{
    if(!awaitingResult)return;
@@ -151,6 +168,10 @@ document.getElementById('finish').onclick=()=>{
  },20000);
 };
 document.getElementById('restart').onclick=()=>{
+ if(submissionStarted){
+   alert('送信済みの可能性があります。同じ内容を再送する前にスプレッドシートの回答一覧で受付番号を確認してください。');
+   return;
+ }
  document.getElementById('done').classList.add('hidden');
  form.classList.remove('hidden');
  window.scrollTo({top:0,behavior:'smooth'});
