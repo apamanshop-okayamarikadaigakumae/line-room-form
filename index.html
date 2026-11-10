@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#153393"><title>お部屋探し希望条件フォーム｜接続テスト v1.1</title>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#153393"><title>お部屋探し希望条件フォーム</title>
 <style>
 :root{font-family:system-ui,-apple-system,"Yu Gothic",Meiryo,sans-serif;color:#203642;background:#fff}*{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:3px solid #153393}.wrap{max-width:690px;margin:auto;padding:18px 16px 52px}header .wrap{padding:18px 16px}.eyebrow{font-size:12px;color:#153393;font-weight:700}h1{font-size:23px;line-height:1.4;margin:5px 0 7px}h2{font-size:16px;margin:0 0 7px;color:#153393}p{line-height:1.7}.sub{font-size:13px;color:#657780}.alert{background:#fff3d9;border:1px solid #f2d99e;padding:14px;border-radius:12px;font-size:13px;line-height:1.7;margin-bottom:18px}.steps{display:flex;gap:7px;margin:18px 0}.steps span{flex:1;height:5px;background:#d7e2e4;border-radius:10px}.steps span.active{background:#153393}.card{background:transparent;border-radius:0;padding:0;margin:0;box-shadow:none}.page+.page{margin-top:34px;padding-top:28px;border-top:1px solid #e3e8f2}.field{margin-top:22px}.field:first-of-type{margin-top:16px}.field-title{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-weight:700;font-size:14px}.req{color:#c92845;font-size:12px}.optional{color:#647681;font-size:11px;background:#eef2f4;border-radius:5px;padding:3px 6px}.help{color:#667983;font-size:12px;margin:6px 0 9px}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.choices label{display:flex;gap:8px;align-items:center;border:1px solid #cfdbdf;padding:11px 9px;border-radius:10px;min-height:45px;cursor:pointer;font-size:14px}.choices label:has(input:checked){background:#edf1ff;border-color:#153393;color:#153393;font-weight:700}input[type=checkbox],input[type=radio]{accent-color:#153393;width:17px;height:17px;flex:none}input[type=text],input[type=tel],select,textarea{width:100%;border:1px solid #c9d5d9;border-radius:10px;padding:12px;font:inherit;background:#fff;color:#203642}textarea{min-height:100px;resize:vertical}input:focus,select:focus,textarea:focus{outline:2px solid #153393;outline-offset:1px}.actions{display:flex;gap:9px;margin-top:20px}.btn{flex:1;border:0;border-radius:11px;padding:15px 12px;background:#153393;color:#fff;font-weight:800;font-size:15px;cursor:pointer}.btn.secondary{background:#e7edef;color:#304752}.btn:disabled{opacity:.4;cursor:not-allowed}.hidden{display:none!important}.summary-row{border-bottom:1px solid #e8eff0;padding:12px 0}.summary-row strong{display:block;font-size:12px;color:#60747e;margin-bottom:5px}.summary-row div{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}.notice{font-size:12px;color:#5d6d76;line-height:1.7}footer{font-size:12px;color:#71818a;margin-top:20px}.error{color:#bc2642;font-size:12px;margin-top:7px}.counter{font-size:12px;color:#69808a;text-align:right;margin-top:5px}@media(max-width:390px){.choices{grid-template-columns:1fr 1fr}.card{padding:0}.choices label{font-size:13px}}
 
@@ -14,13 +14,13 @@
 .sending-desc{font-size:13px;color:#60747e;line-height:1.8}
 @media(prefers-reduced-motion:reduce){.sending-spinner{animation-duration:2s}}
 </style><script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script></head><body>
-<header><div class="wrap"><div class="eyebrow">LINE お部屋探し｜接続テスト版</div><h1>お部屋探しの希望条件を教えてください 🏠</h1><div class="sub">ご希望に合うお部屋をご案内するための入力フォームです。</div></div></header>
-<main class="wrap"><div id="liffStatus" class="liff-status" role="status" aria-live="polite">LINE認証を確認しています…</div><div class="alert"><strong>接続テスト中</strong><br>回答はGoogleスプレッドシートへ保存されます。テスト用の架空情報だけを入力してください。実際のお客様にはまだ公開しないでください。</div>
+<header><div class="wrap"><div class="eyebrow">LINE お部屋探し</div><h1>お部屋探しの希望条件を教えてください 🏠</h1><div class="sub">ご希望に合うお部屋をご案内するための入力フォームです。</div></div></header>
+<main class="wrap"><div id="liffStatus" class="liff-status" role="status" aria-live="polite">LINE認証を確認しています…</div><div class="alert"><strong>個人情報の取り扱いについて</strong><br>ご入力いただいた情報およびLINEユーザーIDは、お部屋探しのご相談、物件のご提案、ご連絡、対応履歴の管理のために利用します。詳しい内容は送信前にご確認ください。</div>
 
 <form id="roomForm" novalidate>
 <section class="card page" data-page="0"><h2>お客様について</h2><div class="sub">まずは簡単な情報から。すべて任意です。</div>
-<div class="field"><label class="field-title" for="name">お名前 <span class="optional">任意</span></label><input id="name" name="name" type="text" maxlength="80" autocomplete="off" placeholder="例：山田 太郎（テスト名で入力）"></div>
-<div class="field"><label class="field-title" for="phone">携帯番号 <span class="optional">任意</span></label><input id="phone" name="phone" type="tel" inputmode="tel" maxlength="24" autocomplete="off" placeholder="テスト版のため実番号は入力しないでください"></div>
+<div class="field"><label class="field-title" for="name">お名前 <span class="optional">任意</span></label><input id="name" name="name" type="text" maxlength="80" autocomplete="off" placeholder="例：山田 太郎"></div>
+<div class="field"><label class="field-title" for="phone">携帯番号 <span class="optional">任意</span></label><input id="phone" name="phone" type="tel" inputmode="tel" maxlength="24" autocomplete="off" placeholder="例：09012345678"></div>
 <div class="field"><label class="field-title" for="school">通学先・勤務先 <span class="optional">任意</span></label><input id="school" name="school" type="text" maxlength="100" autocomplete="off" placeholder="例：岡山理科大学"></div>
 <div class="field"><div class="field-title">お引っ越しの理由 <span class="optional">任意</span></div><div class="choices" data-options="reasons"></div></div>
 </section>
@@ -38,18 +38,34 @@
 <div class="field"><label class="field-title" for="areaSize">希望面積 <span class="optional">任意</span></label><select id="areaSize" name="areaSize"></select></div>
 <div class="field"><div class="field-title">その他の条件 <span class="optional">任意</span></div><div class="choices" data-options="features"></div><label class="field-title" for="other" style="margin-top:14px">自由記入 <span class="optional">任意</span></label><textarea id="other" name="other" maxlength="500" placeholder="例：2階以上、日当たり重視、ネット無料など"></textarea><div class="counter">500文字まで</div></div>
 </section>
-<section class="card page" data-page="3"><h2>最後に</h2><div class="field"><div class="field-title">当店を知ったきっかけ <span class="optional">任意</span></div><div class="choices" data-options="sources"></div></div><p class="notice">「入力内容を確認する」を押すと、送信前の確認画面に進みます。送信するとテスト回答が保存されます。</p></section>
+<section class="card page" data-page="3"><h2>最後に</h2><div class="field"><div class="field-title">当店を知ったきっかけ <span class="optional">任意</span></div><div class="choices" data-options="sources"></div></div><p class="notice">「入力内容を確認する」を押すと、送信前の確認画面に進みます。送信するとご回答が受付システムに保存されます。</p></section>
 <div class="actions"><button class="btn" type="button" id="next">入力内容を確認する →</button></div></form>
-<section id="confirm" class="card hidden" aria-live="polite"><h2>入力内容の確認</h2><p class="sub">内容を確認して送信してください。送信した回答はテスト用スプレッドシートに保存されます。</p><div id="summary"></div><div class="actions"><button class="btn secondary" id="edit" type="button">修正する</button><button class="btn" id="finish" type="button">テスト回答を送信</button></div></section>
+<section id="confirm" class="card hidden" aria-live="polite"><h2>入力内容の確認</h2><p class="sub">内容を確認して送信してください。送信した回答は受付システムに保存されます。</p><div id="summary"></div><div class="privacy-consent" style="margin-top:22px;padding:15px;border:1px solid #cfdbdf;border-radius:10px;background:#f6f8fc"><strong style="font-size:14px;color:#153393">個人情報の取り扱いと送信への同意</strong>
+<p class="notice">取得する情報：お名前、電話番号、通学先・勤務先、希望条件などの入力情報、およびLINEユーザーID。利用目的：お部屋探しの相談対応、物件紹介、ご連絡、対応履歴の管理。保存先：当店が管理するGoogleスプレッドシート。回答は担当者等の必要な範囲で取り扱います。</p>
+<p class="notice">情報の管理事業者：<strong id="operatorName">未設定</strong><br>個人情報に関するお問い合わせ：<strong id="operatorContact">未設定</strong></p>
+<p class="notice"><a id="privacyLink" href="https://www.apamanshop.com/privacy/index.html" target="_blank" rel="noopener noreferrer">APAMAN株式会社の個人情報保護方針を確認する（外部サイト）</a><br>※リンク先はAPAMAN株式会社の方針です。店舗運営会社の独自受付フォームへの適用範囲については、運営会社にご確認ください。</p>
+<p class="notice" id="configurationWarning" style="color:#bc2642;font-weight:700">運営会社・問い合わせ先が未設定のため、現在は送信できません。</p>
+<label style="display:flex;gap:9px;align-items:flex-start;font-size:14px"><input id="privacyAgree" type="checkbox" style="margin-top:2px"> <span>上記の取得情報・利用目的・管理事業者・問い合わせ先を確認し、回答の送信に同意します。</span></label></div><div class="actions"><button class="btn secondary" id="edit" type="button">修正する</button><button class="btn" id="finish" type="button">回答を送信</button></div></section>
 <section id="done" class="card hidden" aria-live="polite"><h2 id="doneTitle">送信結果</h2><p id="doneMessage"></p><button class="btn secondary" type="button" id="restart">入力画面へ戻る</button></section>
-<footer>お部屋探し希望条件フォーム v1.1 ｜ 接続テスト版（本番公開前）</footer>
+<footer>お部屋探し希望条件フォーム</footer>
 </main>
 <div id="sendingOverlay" class="sending-overlay hidden" role="status" aria-live="polite" aria-label="回答を送信しています">
   <div class="sending-panel"><div class="sending-spinner" aria-hidden="true"></div><div class="sending-title">回答を送信しています…</div><div class="sending-desc">送信結果を確認しています。<br>画面を閉じず、そのままお待ちください。<br>送信ボタンを繰り返し押す必要はありません。</div></div>
 </div>
 <script>
 'use strict';
+// 本番公開前に運営会社の正式名称と問い合わせ先を必ず設定してください。
+// APAMAN株式会社の方針は参考リンクです。店舗運営会社の方針として誤認させないでください。
+const OPERATOR_NAME = '株式会社ｅｖｅ'; // 例：株式会社〇〇（正式商号）
+const OPERATOR_CONTACT = '086-236-6622'; // 例：電話番号または問い合わせメールアドレス
+const PRIVACY_URL = 'https://www.apamanshop.com/privacy/index.html';
+const CONSENT_VERSION = '2026-11-10-v1';
 const GAS_URL='https://script.google.com/macros/s/AKfycby2sV0D_ysH5X23ISGlL6F2CSqltWziV2cvT1z3vqGIDCc2OnP2pw5UR6xqsuwzZ1RxaA/exec';
+const configurationReady = OPERATOR_NAME.trim().length > 1 && OPERATOR_CONTACT.trim().length > 3;
+document.getElementById('operatorName').textContent = OPERATOR_NAME || '未設定';
+document.getElementById('operatorContact').textContent = OPERATOR_CONTACT || '未設定';
+document.getElementById('privacyLink').href = PRIVACY_URL;
+if(configurationReady) document.getElementById('configurationWarning').classList.add('hidden');
 let lineReady=false;
 let pendingRequestId=null;
 let awaitingResult=false;
@@ -79,8 +95,8 @@ sendButton.disabled=true;
      status.textContent='送信不可：LINE認証トークンを取得できません。LIFF設定を確認してください。';return;
    }
    lineReady=true;
-   sendButton.disabled=false;
-   status.textContent='LINE認証OK：テスト送信が可能です。';
+   sendButton.disabled=!configurationReady;
+   status.textContent=configurationReady?'LINE認証が完了しました。送信できます。':'LINE認証は完了しましたが、管理事業者の設定が未完了のため送信できません。';
  } catch(e){status.textContent='LINE認証の初期化に失敗しました：'+(e.code||'ERROR');}
 })();
 // 後から選択肢を変更するときは、下記の配列だけを編集してください。
@@ -180,6 +196,8 @@ window.addEventListener('message',function(event){
  // エラー応答のみでは保存済みの可能性を排除できないため照会を継続する。
 });
 document.getElementById('finish').onclick=()=>{
+ if(!configurationReady){alert('運営会社と問い合わせ先の設定が完了していないため送信できません。');return;}
+ if(!document.getElementById('privacyAgree').checked){alert('個人情報の利用目的をご確認のうえ、同意にチェックしてください。');return;}
  if(awaitingResult || submissionStarted)return;
  if(!lineReady || !window.liff || !liff.isInClient() || !liff.isLoggedIn()){
    alert('LINEアプリ内で認証してから送信してください。');return;
@@ -204,7 +222,7 @@ document.getElementById('finish').onclick=()=>{
  sendFrame.title='送信処理';
  document.body.appendChild(sendFrame);
  postForm.target=sendFrame.name;
- const values={idToken:token,requestId:pendingRequestId,statusKey:statusSecret,payload:JSON.stringify(getValues())};
+ const values={idToken:token,requestId:pendingRequestId,statusKey:statusSecret,payload:JSON.stringify(getValues()),consent:'true',consentVersion:CONSENT_VERSION};
  for(const [key,value] of Object.entries(values)){
    const field=document.createElement('input');field.type='hidden';field.name=key;field.value=value;postForm.appendChild(field);
  }
