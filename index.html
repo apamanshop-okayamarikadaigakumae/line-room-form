@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#153393"><title>お部屋探し希望条件フォーム｜接続テスト v0.9</title>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#153393"><title>お部屋探し希望条件フォーム｜接続テスト v1.0</title>
 <style>
 :root{font-family:system-ui,-apple-system,"Yu Gothic",Meiryo,sans-serif;color:#203642;background:#fff}*{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:3px solid #153393}.wrap{max-width:690px;margin:auto;padding:18px 16px 52px}header .wrap{padding:18px 16px}.eyebrow{font-size:12px;color:#153393;font-weight:700}h1{font-size:23px;line-height:1.4;margin:5px 0 7px}h2{font-size:16px;margin:0 0 7px;color:#153393}p{line-height:1.7}.sub{font-size:13px;color:#657780}.alert{background:#fff3d9;border:1px solid #f2d99e;padding:14px;border-radius:12px;font-size:13px;line-height:1.7;margin-bottom:18px}.steps{display:flex;gap:7px;margin:18px 0}.steps span{flex:1;height:5px;background:#d7e2e4;border-radius:10px}.steps span.active{background:#153393}.card{background:transparent;border-radius:0;padding:0;margin:0;box-shadow:none}.page+.page{margin-top:34px;padding-top:28px;border-top:1px solid #e3e8f2}.field{margin-top:22px}.field:first-of-type{margin-top:16px}.field-title{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-weight:700;font-size:14px}.req{color:#c92845;font-size:12px}.optional{color:#647681;font-size:11px;background:#eef2f4;border-radius:5px;padding:3px 6px}.help{color:#667983;font-size:12px;margin:6px 0 9px}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.choices label{display:flex;gap:8px;align-items:center;border:1px solid #cfdbdf;padding:11px 9px;border-radius:10px;min-height:45px;cursor:pointer;font-size:14px}.choices label:has(input:checked){background:#edf1ff;border-color:#153393;color:#153393;font-weight:700}input[type=checkbox],input[type=radio]{accent-color:#153393;width:17px;height:17px;flex:none}input[type=text],input[type=tel],select,textarea{width:100%;border:1px solid #c9d5d9;border-radius:10px;padding:12px;font:inherit;background:#fff;color:#203642}textarea{min-height:100px;resize:vertical}input:focus,select:focus,textarea:focus{outline:2px solid #153393;outline-offset:1px}.actions{display:flex;gap:9px;margin-top:20px}.btn{flex:1;border:0;border-radius:11px;padding:15px 12px;background:#153393;color:#fff;font-weight:800;font-size:15px;cursor:pointer}.btn.secondary{background:#e7edef;color:#304752}.btn:disabled{opacity:.4;cursor:not-allowed}.hidden{display:none!important}.summary-row{border-bottom:1px solid #e8eff0;padding:12px 0}.summary-row strong{display:block;font-size:12px;color:#60747e;margin-bottom:5px}.summary-row div{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}.notice{font-size:12px;color:#5d6d76;line-height:1.7}footer{font-size:12px;color:#71818a;margin-top:20px}.error{color:#bc2642;font-size:12px;margin-top:7px}.counter{font-size:12px;color:#69808a;text-align:right;margin-top:5px}@media(max-width:390px){.choices{grid-template-columns:1fr 1fr}.card{padding:0}.choices label{font-size:13px}}
 
@@ -42,7 +42,7 @@
 <div class="actions"><button class="btn" type="button" id="next">入力内容を確認する →</button></div></form>
 <section id="confirm" class="card hidden" aria-live="polite"><h2>入力内容の確認</h2><p class="sub">内容を確認して送信してください。送信した回答はテスト用スプレッドシートに保存されます。</p><div id="summary"></div><div class="actions"><button class="btn secondary" id="edit" type="button">修正する</button><button class="btn" id="finish" type="button">テスト回答を送信</button></div></section>
 <section id="done" class="card hidden" aria-live="polite"><h2 id="doneTitle">送信結果</h2><p id="doneMessage"></p><button class="btn secondary" type="button" id="restart">入力画面へ戻る</button></section>
-<footer>お部屋探し希望条件フォーム v0.9 ｜ 接続テスト版（本番公開前）</footer>
+<footer>お部屋探し希望条件フォーム v1.0 ｜ 接続テスト版（本番公開前）</footer>
 </main>
 <div id="sendingOverlay" class="sending-overlay hidden" role="status" aria-live="polite" aria-label="回答を送信しています">
   <div class="sending-panel"><div class="sending-spinner" aria-hidden="true"></div><div class="sending-title">回答を送信しています…</div><div class="sending-desc">送信結果を確認しています。<br>画面を閉じず、そのままお待ちください。<br>送信ボタンを繰り返し押す必要はありません。</div></div>
@@ -54,6 +54,11 @@ let lineReady=false;
 let pendingRequestId=null;
 let awaitingResult=false;
 let submitTimeout=null;
+let statusSecret=null;
+let statusTimer=null;
+let statusBusy=false;
+let statusScript=null;
+let statusSeq=0;
 let sendFrame=null;
 let submissionStarted=false;
 const sendingOverlay=document.getElementById('sendingOverlay');
@@ -111,23 +116,68 @@ function showResult(ok,message){
  document.getElementById('doneMessage').textContent=message;
  window.scrollTo({top:0,behavior:'smooth'});
 }
+function stopStatusCheck(){
+ clearTimeout(statusTimer);
+ if(statusScript){statusScript.remove();statusScript=null;}
+ statusBusy=false;
+}
 function clearSending(){
  sendingOverlay.classList.add('hidden');
  awaitingResult=false;
  clearTimeout(submitTimeout);
- sendButton.disabled=!lineReady;
- sendButton.textContent='テスト回答を送信';
+ stopStatusCheck();
+ sendButton.disabled=true; // 送信開始後は再送信を許可しない
+ sendButton.textContent='送信済み';
+}
+function confirmedSaved(duplicate){
+ if(!awaitingResult)return;
+ clearSending();
+ showResult(true,'送信が完了しました。受付番号：'+pendingRequestId+'。回答を正常に保存しました。');
+}
+// JSONP: 照会用の秘密キーを持つ端末に保存の有無だけを返す。
+// LINEのIDトークンや回答データはURLに含めない。
+function checkSavedStatus(){
+ if(!awaitingResult || statusBusy || !pendingRequestId || !statusSecret)return;
+ statusBusy=true;
+ const seq=++statusSeq;
+ const callback='roomStatusV10_'+seq;
+ let settled=false;
+ const finishCheck=()=>{
+   if(settled)return;
+   settled=true;
+   delete window[callback];
+   if(statusScript){statusScript.remove();statusScript=null;}
+   statusBusy=false;
+ };
+ window[callback]=function(response){
+   finishCheck();
+   if(!awaitingResult)return;
+   if(response && response.ok===true && response.saved===true && response.requestId===pendingRequestId){
+     confirmedSaved(false);
+   }else if(awaitingResult){
+     statusTimer=setTimeout(checkSavedStatus,1800);
+   }
+ };
+ const script=document.createElement('script');
+ statusScript=script;
+ script.src=GAS_URL+'?action=status&requestId='+encodeURIComponent(pendingRequestId)+
+   '&statusKey='+encodeURIComponent(statusSecret)+'&callback='+encodeURIComponent(callback);
+ script.onerror=()=>{
+   finishCheck();
+   if(awaitingResult)statusTimer=setTimeout(checkSavedStatus,2500);
+ };
+ document.head.appendChild(script);
+ // 応答が来ない場合も次の照会へ（最大20秒の全体タイムアウトとは別）
+ setTimeout(()=>{
+   if(!settled){finishCheck();if(awaitingResult)statusTimer=setTimeout(checkSavedStatus,1800);}
+ },5000);
 }
 window.addEventListener('message',function(event){
  if(!/^https:\/\/(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(event.origin) && event.origin!=='https://script.google.com')return;
  const r=event.data;
  if(!awaitingResult || !r || r.kind!=='ROOM_FORM_RESULT' || r.requestId!==pendingRequestId)return;
- clearSending();
- if(r.ok){
-   showResult(true,'受付番号：'+r.requestId+(r.duplicate?'（同じ回答の再送として処理）':'')+'。スプレッドシートの回答一覧を確認してください。');
- }else{
-   showResult(false,'受付エラー：'+(r.error||'不明なエラー')+'。再送する前にスプレッドシートを確認してください。');
- }
+ if(r.ok){confirmedSaved(r.duplicate)}
+ // エラー応答のみでは保存済みの可能性を排除できないため照会を継続する。
 });
 document.getElementById('finish').onclick=()=>{
  if(awaitingResult || submissionStarted)return;
@@ -140,6 +190,10 @@ document.getElementById('finish').onclick=()=>{
    if(!window.crypto || !crypto.randomUUID){alert('送信番号を生成できません。端末を更新してください。');return;}
    pendingRequestId=crypto.randomUUID();
  }
+ if(!statusSecret){
+   const bytes=new Uint8Array(32);crypto.getRandomValues(bytes);
+   statusSecret=Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+ }
  // GASは通常のHTMLフォームPOSTで受信する。IDトークンをURLには載せない。
  const postForm=document.createElement('form');
  postForm.method='POST';postForm.action=GAS_URL;
@@ -150,7 +204,7 @@ document.getElementById('finish').onclick=()=>{
  sendFrame.title='送信処理';
  document.body.appendChild(sendFrame);
  postForm.target=sendFrame.name;
- const values={idToken:token,requestId:pendingRequestId,payload:JSON.stringify(getValues())};
+ const values={idToken:token,requestId:pendingRequestId,statusKey:statusSecret,payload:JSON.stringify(getValues())};
  for(const [key,value] of Object.entries(values)){
    const field=document.createElement('input');field.type='hidden';field.name=key;field.value=value;postForm.appendChild(field);
  }
@@ -161,11 +215,12 @@ document.getElementById('finish').onclick=()=>{
  sendButton.disabled=true;sendButton.textContent='送信中…';
  try{postForm.submit();}catch(e){submissionStarted=false;clearSending();postForm.remove();alert('送信開始に失敗しました。');return;}
  postForm.remove();
+ statusTimer=setTimeout(checkSavedStatus,1200);
  submitTimeout=setTimeout(()=>{
    if(!awaitingResult)return;
    clearSending();
-   showResult(false,'送信結果の通知を受信できませんでした。保存されている可能性があるため、再送せずスプレッドシートの「回答一覧」を先に確認してください。受付番号：'+pendingRequestId);
- },20000);
+   showResult(false,'保存結果を自動確認できませんでした。送信済みの可能性があるため再送せず、スプレッドシートの「回答一覧」で受付番号を確認してください。受付番号：'+pendingRequestId);
+ },30000);
 };
 document.getElementById('restart').onclick=()=>{
  if(submissionStarted){
